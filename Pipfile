@@ -12,6 +12,8 @@ name = "pypi"
 [packages]
 
 google-cloud-bigquery = "==1.3.*"
+facebook-business = "==3.0.*"
+python-dotenv = "==0.8.*"
 
 
 [requires]
