@@ -10,8 +10,6 @@ DOTENV_PATH = os.path.join(BASE_PATH, '.env')
 load_dotenv(DOTENV_PATH)
 
 from pydash.objects import get
-from google.cloud import bigquery
-
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign as AdCampaign
