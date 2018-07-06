@@ -12,13 +12,13 @@ load_dotenv(DOTENV_PATH)
 from pydash.objects import get
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.adaccount import AdAccount
-from facebook_business.adobjects.campaign import Campaign as AdCampaign
+from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.exceptions import FacebookRequestError
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.user import User
 
-class TestSite(unittest.TestCase):
+class TestFacebook(unittest.TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
         logger_path = os.getenv('LOG_PATH', '')
@@ -30,53 +30,47 @@ class TestSite(unittest.TestCase):
         self.logger.propagate = False
 
         # facebook marketing api
-        self.FB_APP_ID = os.getenv('FB_APP_ID', '')
-        self.FB_APP_SECRET = os.getenv('FB_APP_SECRET', '')
-        self.FB_ACCESS_TOKEN = os.getenv('FB_ACCESS_TOKEN', '')
-        self.FB_MARKETING_ACCOUNT = os.getenv('FB_MARKETING_ACCOUNT', '')
+        self.FACEBOOK_APP_ID = os.getenv('FACEBOOK_APP_ID', '')
+        self.FACEBOOK_APP_SECRET = os.getenv('FACEBOOK_APP_SECRET', '')
+        self.FACEBOOK_ACCESS_TOKEN = os.getenv('FACEBOOK_ACCESS_TOKEN', '')
+        self.FACEBOOK_MARKETING_ACCOUNT = os.getenv('FACEBOOK_MARKETING_ACCOUNT', '')
 
         FacebookAdsApi.init(
-            self.FB_APP_ID,
-            self.FB_APP_SECRET,
-            self.FB_ACCESS_TOKEN,
+            self.FACEBOOK_APP_ID,
+            self.FACEBOOK_APP_SECRET,
+            self.FACEBOOK_ACCESS_TOKEN,
         )
-
-        # google bigquery
-        self.BIGQUERY_PROJECT = os.getenv('BIGQUERY_PROJECT', '')
-        # self.client = bigquery.Client(project=BIGQUERY_PROJECT)
 
     def get_campaigns_by_account(self, account_id):
         account = AdAccount(account_id)
-        campaigns = account.get_campaigns(fields=[
-            'account_id',
-            'adlabels',
-            'bid_strategy',
-            'brand_lift_studies',
-            'budget_remaining',
-            'buying_type',
-            'configured_status',
-            'created_time',
-            'daily_budget',
-            'effective_status',
-            'id',
-            'name',
-            'objective',
-            'recommendations',
-            'start_time',
-            'status',
-            'stop_time',
-            'updated_time',
-            'adbatch',
-            'execution_options',
-        ])
+        fields = [attr for attr in dir(Campaign.Field) if not callable(getattr(Campaign.Field, attr)) and not attr.startswith("__")]
+        exclude_fields = []
+        [fields.remove(field) for field in exclude_fields]
+
+        campaigns = account.get_campaigns(fields=fields)
 
         counter = 0
         for campaign in campaigns:
-            # print(ad_sets)
-            print('name: ', get(campaign, 'name', ''))
+            print(campaign.export_all_data())
             counter += 1
 
         print('Length campaings: ', counter)
+
+
+    def get_ad_sets_by_account(self, account_id):
+        account = AdAccount(account_id)
+        fields = [attr for attr in dir(AdSet.Field) if not callable(getattr(AdSet.Field, attr)) and not attr.startswith("__")]
+        exclude_fields = []
+        [fields.remove(field) for field in exclude_fields]
+
+        ad_sets = account.get_ad_sets(fields=fields)
+
+        counter = 0
+        for ad_set in ad_sets:
+            print(ad_set.export_all_data())
+            counter += 1
+
+        print('Length adsets: ', counter)
 
     def get_ad_sets_by_account(self, account_id):
         account = AdAccount(account_id)
@@ -126,7 +120,7 @@ class TestSite(unittest.TestCase):
 
         counter = 0
         for ad_set in ad_sets:
-            # print(ad_sets)
+            print(ad_sets)
             print('name: ', get(ad_set, 'name', ''))
             counter += 1
 
@@ -168,17 +162,17 @@ class TestSite(unittest.TestCase):
 
         counter = 0
         for ad in ads:
-            # print(ad_sets)
+            print(ad)
             print('name: ', get(ad, 'name', ''))
             counter += 1
 
         print('Length ads: ', counter)
 
-    def test_fb(self):
-        pass
-        # self.get_campaigns_by_account(self.FB_MARKETING_ACCOUNT)
-        # self.get_ad_sets_by_account(self.FB_MARKETING_ACCOUNT)
-        # self.get_ads(self.FB_MARKETING_ACCOUNT)
+    def test_facebook(self):
+        # pass
+        self.get_campaigns_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
+        # self.get_ad_sets_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
+        # self.get_ads(self.FACEBOOK_MARKETING_ACCOUNT)
 
 
 if __name__ == '__main__':
