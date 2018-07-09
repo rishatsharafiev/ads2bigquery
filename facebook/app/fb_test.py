@@ -14,6 +14,7 @@ from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.adobjects.adset import AdSet
+from facebook_business.adobjects.ad import Ad
 from facebook_business.exceptions import FacebookRequestError
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.user import User
@@ -52,29 +53,15 @@ class TestFacebook(unittest.TestCase):
         counter = 0
         for campaign in campaigns:
             print(campaign.export_all_data())
+            break
             counter += 1
 
         print('Length campaings: ', counter)
 
 
     def get_ad_sets_by_account(self, account_id):
-        account = AdAccount(account_id)
-        fields = [attr for attr in dir(AdSet.Field) if not callable(getattr(AdSet.Field, attr)) and not attr.startswith("__")]
-        exclude_fields = []
-        [fields.remove(field) for field in exclude_fields]
-
-        ad_sets = account.get_ad_sets(fields=fields)
-
-        counter = 0
-        for ad_set in ad_sets:
-            print(ad_set.export_all_data())
-            counter += 1
-
-        print('Length adsets: ', counter)
-
-    def get_ad_sets_by_account(self, account_id):
-        account = AdAccount(account_id)
-        ad_sets = account.get_ad_sets(fields=[
+        """
+        fields=[
             'account_id',
             'adlabels',
             'adset_schedule',
@@ -116,19 +103,27 @@ class TestFacebook(unittest.TestCase):
             'campaign_spec',
             # 'daily_imps',
             'execution_options'
-        ])
+        ]
+        """
+
+        account = AdAccount(account_id)
+        fields = [attr for attr in dir(AdSet.Field) if not callable(getattr(AdSet.Field, attr)) and not attr.startswith("__")]
+        exclude_fields = ['daily_imps']
+        [fields.remove(field) for field in exclude_fields]
+
+        ad_sets = account.get_ad_sets(fields=fields)
 
         counter = 0
         for ad_set in ad_sets:
-            print(ad_sets)
-            print('name: ', get(ad_set, 'name', ''))
+            print(ad_set.export_all_data())
+            break
             counter += 1
 
         print('Length adsets: ', counter)
 
-    def get_ads(self, account_id):
-        account = AdAccount(account_id)
-        ads = account.get_ads(fields=[
+    def get_ads_by_account(self, account_id):
+        """
+        fields=[
             'account_id',
             'ad_review_feedback',
             'adlabels',
@@ -158,12 +153,20 @@ class TestFacebook(unittest.TestCase):
             'display_sequence',
             'execution_options',
             'filename',
-        ])
+        ]
+        """
+
+        account = AdAccount(account_id)
+        fields = [attr for attr in dir(Ad.Field) if not callable(getattr(Ad.Field, attr)) and not attr.startswith("__")]
+        exclude_fields = []
+        [fields.remove(field) for field in exclude_fields]
+
+        ads = account.get_ads(fields=fields)
 
         counter = 0
         for ad in ads:
-            print(ad)
-            print('name: ', get(ad, 'name', ''))
+            print(ad.export_all_data())
+            break
             counter += 1
 
         print('Length ads: ', counter)
@@ -171,8 +174,8 @@ class TestFacebook(unittest.TestCase):
     def test_facebook(self):
         # pass
         self.get_campaigns_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
-        # self.get_ad_sets_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
-        # self.get_ads(self.FACEBOOK_MARKETING_ACCOUNT)
+        self.get_ad_sets_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
+        self.get_ads_by_account(self.FACEBOOK_MARKETING_ACCOUNT)
 
 
 if __name__ == '__main__':
