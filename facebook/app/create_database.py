@@ -65,8 +65,7 @@ class TestSite(unittest.TestCase):
 
     def test_site(self):
         self.create_dataset(self.FACEBOOK_MARKETING_ACCOUNT)
-
-        self.create_table(dataset_id=self.FACEBOOK_MARKETING_ACCOUNT, table_id='campaigns', fields=[
+        fields = [
             'account_id',
             'adlabels',
             'bid_strategy',
@@ -86,7 +85,25 @@ class TestSite(unittest.TestCase):
             'stop_time',
             'updated_time',
             'adbatch',
-            'execution_options',
+            'execution_options'
+        ]
+
+        self.create_table(dataset_id=self.FACEBOOK_MARKETING_ACCOUNT, table_id='campaigns', fields=[
+            'id',
+            'account_id',
+            'budget_rebalance_flag',
+            'buying_type',
+            'can_create_brand_lift_study',
+            'can_use_spend_cap',
+            'configured_status',
+            'created_time',
+            'effective_status',
+            'name',
+            'objective',
+            'source_campaign',
+            'start_time',
+            'status',
+            'updated_time',
         ])
 
 if __name__ == '__main__':
